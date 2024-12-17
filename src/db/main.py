@@ -1,4 +1,4 @@
-from sqlmodel import create_engine, text
+from sqlmodel import create_engine, text, SQLModel
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.ext.declarative import declarative_base
 from src.config import Config
@@ -11,8 +11,5 @@ Base = declarative_base()
 # connecting to database using lifespan event
 async def init_db():
     async with enginer.begin() as conn:
-        statement = text("SELECT 'hello'")
-
-        result = await conn.execute(statement)
-
-        print(result.first())
+        from src.books.models import Book
+        await conn.run_sync(SQLModel.metadata.create_all)
